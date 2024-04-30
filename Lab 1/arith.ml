@@ -60,7 +60,7 @@ found in imperative languages. *)
 
 (* ----------------------------- Algebraic Data Types ------------------------*)
 
-type binop = Add | Mul (* Exerise 1. Extend with Mul *)
+type binop = Add | Mul (* Exercise 1. Extend with Mul *)
 
 type expr =
 | Const of int
@@ -234,6 +234,15 @@ let fact_5 = fact 5;;
 
 let () = print_expr one_to_three_sum
 let () = print_expr fact_5
+
+let result1 = interp fact_5
+let result2 = interp one_to_three_sum
+
+let () = Printf.printf "Result of sum 1 to 3: %d\n" result2
+let () = Printf.printf "Result of factorial 5: %d\n" result1
+
+(* ----------------------------- Tail Recursion -----------------------------*)
+
 
 
 (* ********* Ex. 10 ********* *)
