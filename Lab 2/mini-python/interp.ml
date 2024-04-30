@@ -44,15 +44,9 @@ let rec print_value = function
    the empty string, and the empty list are all considered to be
    False, and any other value to be True.
 *)
-let is_false = function
-  | Vnone
-  | Vbool false
-  | Vstring ""
-  | Vlist [||] -> true
-  | Vint n -> n = 0
-  | _ -> false
+let is_false v = assert false (* TODO (question 2) *)
 
-  let is_true v = not (is_false v)
+let is_true v = assert false (* TODO (question 2) *)
 
 (* We only have global functions in Mini-Python *)
 
@@ -68,22 +62,6 @@ exception Return of value
 
 type ctx = (string, value) Hashtbl.t
 
-(* we implement the following function to compare lists: *)
-let rec compare_list a1 n1 a2 n2 i =
-    if i = n1 && i = n2 then 0 (* if we arrived to the end of both lists then *)
-                                  (* they are equal *)
-    else if i = n1 then -1   (* if the length of the first list is small, then -1 *)
-    else if i = n2 then 1    (* if the length of the second list is small, then 1 *)
-    (* otherwise, we compare the content of both lists at the index i and
-       proceed recursively in case they are equal *)
-    else let c = compare a1.(i) a2.(i) in
-         if c <> 0 then c else compare_list a1 n1 a2 n2 (i + 1)
-  
-  let rec compare_value v1 v2 = match v1, v2 with
-    | Vlist a1, Vlist a2 ->
-      compare_list a1 (Array.length a1) a2 (Array.length a2) 0
-    | _ -> compare v1 v2
-
 (* Interpreting an expression (returns a value) *)
 
 let rec expr ctx = function
@@ -93,61 +71,40 @@ let rec expr ctx = function
       Vstring s
   (* arithmetic *)
   | Ecst (Cint n) ->
-    let converted_n = Int64.to_int n in
-    Vint converted_n
+      assert false (* TODO (question 1) *)
   | Ebinop (Badd | Bsub | Bmul | Bdiv | Bmod |
             Beq | Bneq | Blt | Ble | Bgt | Bge as op, e1, e2) ->
       let v1 = expr ctx e1 in
       let v2 = expr ctx e2 in
       begin match op, v1, v2 with
-        | Badd, Vint n1, Vint n2 -> Vint (n1 + n2)
-        | Bsub, Vint n1, Vint n2 -> Vint (n1 - n2)
-        | Bmul, Vint n1, Vint n2 -> Vint (n1 * n2)
-        | (Bdiv | Bmod), Vint _, Vint 0 -> error "division by zero" 
-        | Bdiv, Vint n1, Vint n2 -> Vint (n1/n2) 
-        | Bmod, Vint n1, Vint n2 -> Vint (n1 mod n2) 
-        | Beq, _, _  -> Vbool ((compare_value v1 v2) = 0)  (* DONE (question 2) *)
-        | Bneq, _, _ -> Vbool ((compare_value v1 v2) <> 0) (* DONE (question 2) *)
-        | Blt, _, _  -> Vbool ((compare_value v1 v2) < 0)  (* DONE (question 2) *)
-        | Ble, _, _  -> Vbool ((compare_value v1 v2) <= 0) (* DONE (question 2) *)
-        | Bgt, _, _  -> Vbool ((compare_value v1 v2) > 0)  (* DONE (question 2) *)
-        | Bge, _, _  -> Vbool ((compare_value v1 v2) >= 0) (* DONE (question 2) *)
+        | Badd, Vint n1, Vint n2 -> assert false (* TODO (question 1) *)
+        | Bsub, Vint n1, Vint n2 -> assert false (* TODO (question 1) *)
+        | Bmul, Vint n1, Vint n2 -> assert false (* TODO (question 1) *)
+        | Bdiv, Vint n1, Vint n2 -> assert false (* TODO (question 1) *)
+        | Bmod, Vint n1, Vint n2 -> assert false (* TODO (question 1) *)
+        | Beq, _, _  -> assert false (* TODO (question 2) *)
+        | Bneq, _, _ -> assert false (* TODO (question 2) *)
+        | Blt, _, _  -> assert false (* TODO (question 2) *)
+        | Ble, _, _  -> assert false (* TODO (question 2) *)
+        | Bgt, _, _  -> assert false (* TODO (question 2) *)
+        | Bge, _, _  -> assert false (* TODO (question 2) *)
         | Badd, Vstring s1, Vstring s2 ->
             assert false (* TODO (question 3) *)
         | Badd, Vlist l1, Vlist l2 ->
             assert false (* TODO (question 5) *)
         | _ -> error "unsupported operand types"
       end
-      | Eunop (Uneg, e1) ->
-        begin match expr ctx e1 with
-         | Vint n -> Vint (-n)
-         | _ -> error "unsupported operand types" end (* DONE (question 1) *)
+  | Eunop (Uneg, e1) ->
+      assert false (* TODO (question 1) *)
   (* Boolean *)
   | Ecst (Cbool b) ->
-    if b then 
-        Vbool true
-    else
-        Vbool false
+      assert false (* TODO (question 2) *)
   | Ebinop (Band, e1, e2) ->
-    let v1 = expr ctx e1 in
-    let v2 = expr ctx e2 in
-    if is_true v1 && is_true v2 then
-        Vbool true
-    else
-        Vbool false
+      assert false (* TODO (question 2) *)
   | Ebinop (Bor, e1, e2) ->
-      let v1 = expr ctx e1 in
-      let v2 = expr ctx e2 in
-      if is_true v1 || is_true v2 then
-        Vbool true
-      else
-        Vbool false
+      assert false (* TODO (question 2) *)
   | Eunop (Unot, e1) ->
-      let v1 = expr ctx e1 in
-      if is_true v1 then
-        Vbool false
-      else
-        Vbool true
+      assert false (* TODO (question 2) *)
   | Eident {id} ->
       assert false (* TODO (question 3) *)
   (* function call *)
@@ -174,11 +131,7 @@ and stmt ctx = function
   | Sblock bl ->
       block ctx bl
   | Sif (e, s1, s2) ->
-      let condition = expr ctx e in
-      if is_true condition then
-        stmt ctx s1
-      else
-        stmt ctx s2
+      assert false (* TODO (question 2) *)
   | Sassign ({id}, e1) ->
       assert false (* TODO (question 3) *)
   | Sreturn e ->
