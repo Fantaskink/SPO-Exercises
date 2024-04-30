@@ -80,7 +80,9 @@ let rec expr ctx = function
         | Badd, Vint n1, Vint n2 -> Vint (n1 + n2)
         | Bsub, Vint n1, Vint n2 -> Vint (n1 - n2)
         | Bmul, Vint n1, Vint n2 -> Vint (n1 * n2)
+        | Bdiv, Vint n1, Vint 0 -> error "division by zero"
         | Bdiv, Vint n1, Vint n2 -> Vint (n1 / n2)
+        | Bmod, Vint n1, Vint 0 -> error "modulo by zero"
         | Bmod, Vint n1, Vint n2 -> Vint (n1 mod n2)
         | Beq, _, _  -> assert false (* TODO (question 2) *)
         | Bneq, _, _ -> assert false (* TODO (question 2) *)
