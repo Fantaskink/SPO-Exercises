@@ -81,7 +81,9 @@ let e42 = Binop (Mul, Const 2, Binop (Add, Const 20, Const 1))
 let pls_one (e : expr) : expr = Binop (Add, e, Const 1)
 let pls_one e = Binop (Add, e, Const 1)
 let times_two e = Binop (Add, e, e)
-let square e = Binop (Mul, e, e) (* Exercise 1.3 *)
+
+(* Exercise 1.3 *)
+let square (e : expr ) : expr = Binop (Mul, e, e)
 
 (* ----------------------------- Pattern Matching ----------------------------*)
 let expr_to_string e = match e with
@@ -112,6 +114,12 @@ let _ = expr_to_string one
 let _ = expr_to_string ten
 let _ = expr_to_string (times_two one)
 let _ = expr_to_string e42
+
+(* Exercise 1.4 *)
+let () = print_newline()
+let () = print_string (expr_to_string (square (Binop (Add, Const 2, Const 5))))
+let () = print_newline()
+
 
 (* --- Interpreter --- *)
 let rec interp e = match e with
@@ -159,6 +167,8 @@ let rec simplify e = match e with
   (* Exercise 1.6 *)
   | Binop (Mul, e, Const 0) 
   | Binop (Mul, Const 0, e) -> Const 0
+  | Binop (Mul, e, Const 1)
+  | Binop (Mul, Const 1, e) -> simplify e
   | Binop (Mul, e1, e2) -> Binop (Mul, simplify e1, simplify e2)
 
 let s1 = expr_to_string (simplify v1)
@@ -178,7 +188,7 @@ let rec check_valid e = match e with
     Binop (Mul, check_valid e1, check_valid e2)
 
 
-let c = check_valid (Const (-1))
+
 
 exception Negative_Const of int
 
@@ -190,7 +200,7 @@ let rec check_valid e = match e with
   | Binop (Mul, e1, e2) ->
       Binop (Mul, check_valid e1, check_valid e2)
 
-let c = check_valid (Const (-1))
+
 
 let print_expr e =
   try
@@ -198,18 +208,33 @@ let print_expr e =
   with Negative_Const c ->
     Printf.printf "Invalid input: the constant %d is a negative number\n" c
 
-let () = print_expr (Const (-12))
+
 
 (* Exercise 1.8 *)
-let rec sum (c: int) : expr = 
-  if c < 0 then raise (Negative_Const c) else
-  if c = 0 then
-    Const 0
-  else
-    Binop (Add, Const c, sum (c - 1))
 
-(* Exercise 1.9 *)
-let rec fact (c: int) : expr = 
-  if c = 0 then raise (Negative_Const c)
+let rec sum n =
+  if n <= 0 then Const 0
   else
-    Binop (Mul, Const c, fact (c - 1))
+    let res = sum (n-1) in
+      Binop (Add, Const n, res)
+
+let one_to_three_sum = sum 3
+(* = Binop (Add, Const 3, Binop (Add, Const 2, Binop (Add, Const 1, Const 0))) *)
+
+(* ********* Ex. 9 ********* *)
+let rec fact n =
+  if n <= 1 then Const 1
+  else
+    let res = fact (n-1) in
+      Binop (Mul, Const n, res)
+
+let fact_5 = fact 5;;
+    (* Binop (Mul, Const 5, *)
+    (*        Binop (Mul, Const 4, Binop (Mul, Const 3, Binop (Mul, Const 2, Const 1)))) *)
+
+let () = print_expr one_to_three_sum
+let () = print_expr fact_5
+
+
+(* ********* Ex. 10 ********* *)
+(* : int = 120 *)
