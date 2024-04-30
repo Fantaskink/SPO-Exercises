@@ -44,9 +44,17 @@ let rec print_value = function
    the empty string, and the empty list are all considered to be
    False, and any other value to be True.
 *)
-let is_false v = assert false (* TODO (question 2) *)
+let is_false v = match v with
+    | Vnone -> true
+    | Vbool false -> true
+    | Vint n when n = 0 -> true
+    | Vstring "" -> true
+    | Vlist[||] -> true
+    | _ -> false
 
-let is_true v = assert false (* TODO (question 2) *)
+let is_true v = not (is_false v)
+
+(* Global variables (functions) are stored in a hash table *)
 
 (* We only have global functions in Mini-Python *)
 
@@ -64,6 +72,23 @@ type ctx = (string, value) Hashtbl.t
 
 (* Interpreting an expression (returns a value) *)
 
+(* we implement the following function to compare lists: *)
+let rec compare_list a1 n1 a2 n2 i =
+    if i = n1 && i = n2 then 0 (* if we arrived to the end of both lists then *)
+                                  (* they are equal *)
+    else if i = n1 then -1   (* if the length of the first list is small, then -1 *)
+    else if i = n2 then 1    (* if the length of the second list is small, then 1 *)
+    (* otherwise, we compare the content of both lists at the index i and
+       proceed recursively in case they are equal *)
+    else let c = compare a1.(i) a2.(i) in
+         if c <> 0 then c else compare_list a1 n1 a2 n2 (i + 1)
+
+let rec compare_value v1 v2 = match v1, v2 with
+  | Vlist a1, Vlist a2 ->
+    compare_list a1 (Array.length a1) a2 (Array.length a2) 0
+  | _ -> compare v1 v2
+
+
 let rec expr ctx = function
   | Ecst Cnone ->
       Vnone
@@ -80,16 +105,15 @@ let rec expr ctx = function
         | Badd, Vint n1, Vint n2 -> Vint (n1 + n2)
         | Bsub, Vint n1, Vint n2 -> Vint (n1 - n2)
         | Bmul, Vint n1, Vint n2 -> Vint (n1 * n2)
-        | Bdiv, Vint n1, Vint 0 -> error "division by zero"
-        | Bdiv, Vint n1, Vint n2 -> Vint (n1 / n2)
-        | Bmod, Vint n1, Vint 0 -> error "modulo by zero"
+        | (Bdiv | Bmod), Vint _, Vint 0 -> error "division by zero"
+        | Bdiv, Vint n1, Vint n2 -> Vint (n1/n2)
         | Bmod, Vint n1, Vint n2 -> Vint (n1 mod n2)
-        | Beq, _, _  -> assert false (* TODO (question 2) *)
-        | Bneq, _, _ -> assert false (* TODO (question 2) *)
-        | Blt, _, _  -> assert false (* TODO (question 2) *)
-        | Ble, _, _  -> assert false (* TODO (question 2) *)
-        | Bgt, _, _  -> assert false (* TODO (question 2) *)
-        | Bge, _, _  -> assert false (* TODO (question 2) *)
+        | Beq, _, _  -> Vbool ((compare_value v1 v2) = 0)
+        | Bneq, _, _ -> Vbool ((compare_value v1 v2) <> 0)
+        | Blt, _, _  -> Vbool ((compare_value v1 v2) < 0)
+        | Ble, _, _  -> Vbool ((compare_value v1 v2) <= 0)
+        | Bgt, _, _  -> Vbool ((compare_value v1 v2) > 0)
+        | Bge, _, _  -> Vbool ((compare_value v1 v2) >= 0)
         | Badd, Vstring s1, Vstring s2 ->
             assert false (* TODO (question 3) *)
         | Badd, Vlist l1, Vlist l2 ->
@@ -99,16 +123,25 @@ let rec expr ctx = function
   | Eunop (Uneg, e1) ->
     begin match expr ctx e1 with
         | Vint n -> Vint (-n)
-        | _ -> error "unsupported operand types" end (* DONE (question 1) *)
+        | _ -> error "unsupported operand types" end 
   (* Boolean *)
   | Ecst (Cbool b) ->
-      assert false (* TODO (question 2) *)
+      Vbool b
   | Ebinop (Band, e1, e2) ->
-      assert false (* TODO (question 2) *)
+      let v1 = expr ctx e1 in
+      let v2 = expr ctx e2 in
+        if is_true v1 && is_true v2 then Vbool true
+        else Vbool false
   | Ebinop (Bor, e1, e2) ->
-      assert false (* TODO (question 2) *)
+      let v1 = expr ctx e1 in
+        let v2 = expr ctx e2 in
+            if is_true v1 || is_true v2 then Vbool true
+            else Vbool false
   | Eunop (Unot, e1) ->
-      assert false (* TODO (question 2) *)
+      let v1 = expr ctx e1 in
+        if is_true v1 then Vbool false
+        else Vbool true
+  (* Variable *)
   | Eident {id} ->
       assert false (* TODO (question 3) *)
   (* function call *)
@@ -135,7 +168,8 @@ and stmt ctx = function
   | Sblock bl ->
       block ctx bl
   | Sif (e, s1, s2) ->
-      assert false (* TODO (question 2) *)
+      if is_true (expr ctx e) then stmt ctx s1
+      else stmt ctx s2
   | Sassign ({id}, e1) ->
       assert false (* TODO (question 3) *)
   | Sreturn e ->
