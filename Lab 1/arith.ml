@@ -117,6 +117,7 @@ let _ = expr_to_string e42
 let rec interp e = match e with
   | Const c -> c
   | Binop (Add, e1, e2) -> interp e1 + interp e2
+  | Binop (Mul, e1, e2) -> interp e1 * interp e2 (* Exercise 1.5*)
 
 let _ = interp one
 let _ = interp ten
@@ -140,6 +141,10 @@ let rec simplify e = match e with
   | Binop (Add, Const 0, e)
   | Binop (Add, e, Const 0) -> e
   | Binop (Add, e1, e2) -> Binop (Add, e1, e2)
+  (* Exercise 1.6 *)
+  | Binop (Mul, Const 0, e) 
+  | Binop (Mul, e, Const 0) -> Const 0
+  | Binop (Mul, e1, e2) -> Binop (Mul, e1, e2)
 
 let s1 = expr_to_string (simplify v1)
 let s2 = expr_to_string (simplify v2)
@@ -151,6 +156,10 @@ let rec simplify e = match e with
   | Binop (Add, Const 0, e)
   | Binop (Add, e, Const 0) -> simplify e
   | Binop (Add, e1, e2) -> Binop (Add, simplify e1, simplify e2)
+  (* Exercise 1.6 *)
+  | Binop (Mul, e, Const 0) 
+  | Binop (Mul, Const 0, e) -> Const 0
+  | Binop (Mul, e1, e2) -> Binop (Mul, simplify e1, simplify e2)
 
 let s1 = expr_to_string (simplify v1)
 let s2 = expr_to_string (simplify v2)
@@ -164,6 +173,10 @@ let rec check_valid e = match e with
   | Const c -> if c < 0 then raise Negative_Const else Const c
   | Binop (Add, e1, e2) ->
     Binop (Add, check_valid e1, check_valid e2)
+  (* Exercise 1.7 *)
+  | Binop (Mul, e1, e2) ->
+    Binop (Mul, check_valid e1, check_valid e2)
+
 
 let c = check_valid (Const (-1))
 
@@ -173,6 +186,9 @@ let rec check_valid e = match e with
   | Const c -> if c < 0 then raise (Negative_Const c) else Const c
   | Binop (Add, e1, e2) ->
       Binop (Add, check_valid e1, check_valid e2)
+  (* Exercise 1.7 *)
+  | Binop (Mul, e1, e2) ->
+      Binop (Mul, check_valid e1, check_valid e2)
 
 let c = check_valid (Const (-1))
 
@@ -184,3 +200,16 @@ let print_expr e =
 
 let () = print_expr (Const (-12))
 
+(* Exercise 1.8 *)
+let rec sum (c: int) : expr = 
+  if c < 0 then raise (Negative_Const c) else
+  if c = 0 then
+    Const 0
+  else
+    Binop (Add, Const c, sum (c - 1))
+
+(* Exercise 1.9 *)
+let rec fact (c: int) : expr = 
+  if c = 0 then raise (Negative_Const c)
+  else
+    Binop (Mul, Const c, fact (c - 1))
