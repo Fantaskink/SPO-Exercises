@@ -1,0 +1,2 @@
+.depend arithc lexer.ml parser.ml parser.mli parser.automaton test.s
+semantic.cache

@@ -1,0 +1,50 @@
+# dune build main.exe
+# OCAMLPARAM: unset
+# Shared cache: disabled
+# Shared cache location: /Users/johan/.cache/dune/db
+# Workspace root: /Users/johan/GitHub/SPO-Exercises/Lab8/arithc
+# Auto-detected concurrency: 8
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; installed_env =
+#      map
+#        { "INSIDE_DUNE" :
+#            "/Users/johan/GitHub/SPO-Exercises/Lab8/arithc/_build/default"
+#        ; "OCAML_COLOR" : "always"
+#        ; "OPAMCOLOR" : "always"
+#        }
+#  ; instrument_with = []
+#  }
+$ /Users/johan/.opam/default/bin/ocamlc.opt -config > /var/folders/jh/x5lpgt4925ddchhy6ymx5jk40000gn/T/dune_c4210a_output
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamldep.opt -modules -impl main.ml) > _build/default/.main.eobjs/main.impl.d
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamldep.opt -modules -intf compile.mli) > _build/default/.main.eobjs/compile.intf.d
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamldep.opt -modules -intf ast.mli) > _build/default/.main.eobjs/ast.intf.d
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamllex -q -o lexer.ml lexer.mll)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamldep.opt -modules -impl lexer.ml) > _build/default/.main.eobjs/lexer.impl.d
+$ (cd _build/default && /Users/johan/.opam/default/bin/menhir --explain --dump parser.mly --base parser --infer-write-query parser__mock.ml.mock)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamldep.opt -modules -impl parser__mock.ml.mock) > _build/default/.main.eobjs/parser__mock.impl.d
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/ast.cmi -c -intf ast.mli)
+$ (cd _build/.sandbox/30eb204c334494dd4d75c5cd8a3919d7/default && /Users/johan/.opam/default/bin/ocamlc.opt -g -I .main.eobjs/byte -short-paths -i -impl parser__mock.ml.mock) > _build/.sandbox/30eb204c334494dd4d75c5cd8a3919d7/default/parser__mock.mli.inferred
+$ (cd _build/default && /Users/johan/.opam/default/bin/menhir --explain --dump parser.mly --base parser --infer-read-reply parser__mock.mli.inferred)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamldep.opt -modules -intf parser.mli) > _build/default/.main.eobjs/parser.intf.d
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamldep.opt -modules -impl compile.ml) > _build/default/.main.eobjs/compile.impl.d
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamldep.opt -modules -intf mips.mli) > _build/default/.main.eobjs/mips.intf.d
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamldep.opt -modules -impl mips.ml) > _build/default/.main.eobjs/mips.impl.d
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamldep.opt -modules -impl parser.ml) > _build/default/.main.eobjs/parser.impl.d
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/parser.cmi -c -intf parser.mli)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/compile.cmi -c -intf compile.mli)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/mips.cmi -c -intf mips.mli)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/lexer.cmo -c -impl lexer.ml)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/main.cmo -c -impl main.ml)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/compile.cmx -c -impl compile.ml)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/lexer.cmx -c -impl lexer.ml)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/main.cmx -c -impl main.ml)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/parser.cmx -c -impl parser.ml)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/mips.cmx -c -impl mips.ml)
+$ (cd _build/default && /Users/johan/.opam/default/bin/ocamlopt.opt -g -o main.exe .main.eobjs/native/mips.cmx .main.eobjs/native/compile.cmx .main.eobjs/native/parser.cmx .main.eobjs/native/lexer.cmx .main.eobjs/native/main.cmx)
+# Promoting "_build/default/main.exe" to "main.exe"

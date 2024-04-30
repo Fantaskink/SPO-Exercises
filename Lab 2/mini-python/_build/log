@@ -1,0 +1,23 @@
+# dune exec ./minipython.exe test.py
+# OCAMLPARAM: unset
+# Shared cache: disabled
+# Shared cache location: /Users/johan/.cache/dune/db
+# Workspace root: "/Users/johan/OCaml/Lecture 2/mini-python"
+# Auto-detected concurrency: 8
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; installed_env =
+#      map
+#        { "INSIDE_DUNE" :
+#            "/Users/johan/OCaml/Lecture 2/mini-python/_build/default"
+#        ; "OCAML_COLOR" : "always"
+#        ; "OPAMCOLOR" : "always"
+#        }
+#  ; instrument_with = []
+#  }
+$ /Users/johan/.opam/default/bin/ocamlc.opt -config > /var/folders/jh/x5lpgt4925ddchhy6ymx5jk40000gn/T/dune_f2d838_output
