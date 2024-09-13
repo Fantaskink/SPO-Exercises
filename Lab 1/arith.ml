@@ -19,7 +19,9 @@ and execute it:
    For example: *)
 
 let x = 1 + 2
-let () = print_int x
+let () = print_int x;;
+
+print_string "\n";;
 
 let y = x * x
 let () = print_int y;;

@@ -115,7 +115,7 @@ let rec expr ctx = function
         | Bgt, _, _  -> Vbool ((compare_value v1 v2) > 0)
         | Bge, _, _  -> Vbool ((compare_value v1 v2) >= 0)
         | Badd, Vstring s1, Vstring s2 ->
-            assert false (* TODO (question 3) *)
+            Vstring (s1 ^ s2)
         | Badd, Vlist l1, Vlist l2 ->
             assert false (* TODO (question 5) *)
         | _ -> error "unsupported operand types"
@@ -143,14 +143,21 @@ let rec expr ctx = function
         else Vbool true
   (* Variable *)
   | Eident {id} ->
-      assert false (* TODO (question 3) *)
+        begin try Hashtbl.find ctx id
+            with Not_found -> error ("unbound variable " ^ id) end
+    (* Function call *)
   (* function call *)
   | Ecall ({id="len"}, [e1]) ->
       assert false (* TODO (question 5) *)
   | Ecall ({id="list"}, [Ecall ({id="range"}, [e1])]) ->
       assert false (* TODO (question 5) *)
   | Ecall ({id=f}, el) ->
-      assert false (* TODO (question 4) *)
+      if not (Hashtbl.mem functions f) then error ("unbound function " ^ f);
+      let args, body = Hashtbl.find functions f in
+      if List.length args <> List.length el then error "bad arity";
+      let ctx' = Hashtbl.create 16 in
+      List.iter2 (fun {id=x} e -> Hashtbl.add ctx' x (expr ctx e)) args el;
+      begin try stmt ctx' body; Vnone with Return v -> v end (* DONE (question 4) *)
   | Elist el ->
       assert false (* TODO (question 5) *)
   | Eget (e1, e2) ->
@@ -171,9 +178,9 @@ and stmt ctx = function
       if is_true (expr ctx e) then stmt ctx s1
       else stmt ctx s2
   | Sassign ({id}, e1) ->
-      assert false (* TODO (question 3) *)
+        Hashtbl.replace ctx id (expr ctx e1)
   | Sreturn e ->
-      assert false (* TODO (question 4) *)
+        raise (Return (expr ctx e))
   | Sfor ({id}, e, s) ->
       assert false (* TODO (question 5) *)
   | Sset (e1, e2, e3) ->
@@ -192,4 +199,6 @@ and block ctx = function
 
 let file (dl, s) =
   (* TODO (question 4) *)
+  List.iter
+  (fun (f,args,body) -> Hashtbl.add functions f.id (args, body)) dl;
   stmt (Hashtbl.create 16) s

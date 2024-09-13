@@ -1,7 +1,5 @@
-print(not True and 1//10==0)
-print(1<2)
-if False or True:
-    print("ok")
-else:
-    print("oups")
+def fact(n):
+    if n <= 1: return 1
+    return n * fact(n-1)
 
+print(fact(10))
